@@ -1,23 +1,31 @@
 import streamlit as st
 import g4f
 
-# 1. Design setup - Centreret og rent
-st.set_page_config(page_title="Mikas-Bot", page_icon="🤖")
+# 1. Design setup - Tvinger side-menuen til at være åben (expanded)
+st.set_page_config(
+    page_title="Mikas-Bot", 
+    page_icon="🤖", 
+    initial_sidebar_state="expanded"
+)
 
 st.markdown("""
     <style>
+    /* Skjuler Streamlit menuer og deploy knapper */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+    
+    /* Fjerner rød kant på skrivefeltet */
     .stChatInputContainer { border-color: rgba(255, 255, 255, 0.1) !important; }
     .stChatInputContainer:focus-within { border-color: #0078ff !important; box-shadow: none !important; }
     </style>
 """, unsafe_allow_html=True)
 
-# 2. Side-menu (Sidebar)
+# 2. Venstre side-menu (Sidebar)
 with st.sidebar:
     st.title("🤖 Mikas-Bot")
     st.write("---")
+    # Menu med de tre prikker til at slette chatten
     with st.popover("⋯ Indstillinger"):
         if st.button("🗑️ Slet chat"):
             st.session_state.messages = []
@@ -29,7 +37,7 @@ with st.sidebar:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# 4. FORSIDE (Logo i midten)
+# 4. FORSIDE (Logo i midten når chatten er tom)
 if not st.session_state.messages:
     st.write("##")
     st.write("##")
@@ -48,8 +56,9 @@ if spørgsmål := st.chat_input("Skriv til Mikas-Bot her..."):
     st.session_state.messages.append({"role": "user", "content": spørgsmål})
 
     with st.chat_message("assistant"):
-        # Super-instruksen der sikrer dansk og beviser hvem du er
+        # Her er instruksen der beviser det er dig!
         tvungen_instruks = f"BRUGER SPØRGER: {spørgsmål}. REGLER: Du er Mikas-Bot skabt af Mikas på 13 år fra 6.A på NSG. Svar altid på dansk."
+        
         try:
             respons = g4f.ChatCompletion.create(
                 model="gpt-4",
