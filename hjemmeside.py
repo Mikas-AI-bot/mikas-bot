@@ -1,8 +1,8 @@
 import streamlit as st
 import g4f
 
-# 1. Design setup
-st.set_page_config(page_title="Mikas-Bot", page_icon="🤖", layout="wide")
+# 1. Design setup - Centreret og rent
+st.set_page_config(page_title="Mikas-Bot", page_icon="🤖")
 
 st.markdown("""
     <style>
@@ -11,13 +11,10 @@ st.markdown("""
     header {visibility: hidden;}
     .stChatInputContainer { border-color: rgba(255, 255, 255, 0.1) !important; }
     .stChatInputContainer:focus-within { border-color: #0078ff !important; box-shadow: none !important; }
-    
-    /* Dette forsøger at tvinge side-menuen frem */
-    [data-testid="stSidebarNav"] {display: block !important;}
     </style>
 """, unsafe_allow_html=True)
 
-# 2. Side-menuen (Sidebar)
+# 2. Side-menu (Sidebar)
 with st.sidebar:
     st.title("🤖 Mikas-Bot")
     st.write("---")
@@ -34,13 +31,10 @@ if "messages" not in st.session_state:
 
 # 4. FORSIDE (Logo i midten)
 if not st.session_state.messages:
-    # Vi bruger 'columns' til at centrere logoet rigtigt
-    col1, col2, col3 = st.columns([1,2,1])
-    with col2:
-        st.write("##")
-        st.write("##")
-        st.markdown("<h1 style='text-align: center;'>🤖 Mikas-Bot</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-size: 20px;'>Hvad kan jeg hjælpe dig med i dag?</p>", unsafe_allow_html=True)
+    st.write("##")
+    st.write("##")
+    st.markdown("<h1 style='text-align: center;'>🤖 Mikas-Bot</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 20px;'>Hvad kan jeg hjælpe dig med i dag?</p>", unsafe_allow_html=True)
 
 # 5. Vis beskeder
 for message in st.session_state.messages:
@@ -54,6 +48,7 @@ if spørgsmål := st.chat_input("Skriv til Mikas-Bot her..."):
     st.session_state.messages.append({"role": "user", "content": spørgsmål})
 
     with st.chat_message("assistant"):
+        # Super-instruksen der sikrer dansk og beviser hvem du er
         tvungen_instruks = f"BRUGER SPØRGER: {spørgsmål}. REGLER: Du er Mikas-Bot skabt af Mikas på 13 år fra 6.A på NSG. Svar altid på dansk."
         try:
             respons = g4f.ChatCompletion.create(
@@ -62,8 +57,8 @@ if spørgsmål := st.chat_input("Skriv til Mikas-Bot her..."):
             )
             st.markdown(respons)
         except:
-            st.error("Kunne ikke forbinde. Prøv at slette chatten!")
-            respons = "Fejl."
+            respons = "Hov, jeg har lidt svært ved at forbinde. Prøv at slette chatten!"
+            st.markdown(respons)
             
     st.session_state.messages.append({"role": "assistant", "content": respons})
     st.rerun()
