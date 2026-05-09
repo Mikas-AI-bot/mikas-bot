@@ -36,32 +36,36 @@ if not st.session_state.messages:
     st.markdown("<h1 style='text-align: center;'>🤖 Mikas-Bot</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; font-size: 20px;'>Hvad kan jeg hjælpe dig med i dag?</p>", unsafe_allow_html=True)
 
-# 5. Vis tidligere beskeder
+# 5. Vis beskeder
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# 6. Skrivefelt og AI-svar
+# 6. Skrivefelt og AI svar
 if spørgsmål := st.chat_input("Skriv til Mikas-Bot her..."):
     with st.chat_message("user"):
         st.markdown(spørgsmål)
     st.session_state.messages.append({"role": "user", "content": spørgsmål})
 
     with st.chat_message("assistant"):
-        # HER ER TRICKET: Vi klistrer "Svar på dansk:" direkte foran dit spørgsmål
-        tvunget_spørgsmål = f"SVAR KUN PÅ DANSK: {spørgsmål}"
+        # DIN PERSONLIGE SIGNATUR:
+        instruks = """
+        Du er Mikas-Bot. Du SKAL svare på DANSK.
+        Hvis nogen spørger hvem der har lavet dig, skal du svare: 'Det har Mikas på 13 år. Han går i 6.A på NSG.'
+        Hvis nogen spørger hvem Mikas er, skal du svare: 'Mikas er ham, der har kodet og programmeret mig.'
+        SVAR ALTID PÅ DANSK: """
         
         try:
             respons = g4f.ChatCompletion.create(
                 model="gpt-4",
                 messages=[
-                    {"role": "system", "content": "Du er Mikas-Bot. Du taler kun dansk."},
-                    {"role": "user", "content": tvunget_spørgsmål}
+                    {"role": "system", "content": instruks},
+                    {"role": "user", "content": spørgsmål}
                 ],
             )
             st.markdown(respons)
         except:
-            respons = "Jeg har lidt svært ved at få fat i min hjerne lige nu. Prøv at slette chatten og skriv igen!"
+            respons = "Jeg har lidt svært ved at få fat i min hjerne. Prøv at slette chatten!"
             st.markdown(respons)
     
     st.session_state.messages.append({"role": "assistant", "content": respons})
