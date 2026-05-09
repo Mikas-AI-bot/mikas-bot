@@ -1,7 +1,7 @@
 import streamlit as st
 import g4f
 
-# 1. Design setup
+# 1. Design setup - Gør den flot og minimalistisk
 st.set_page_config(page_title="Mikas-Bot", page_icon="🤖")
 
 st.markdown("""
@@ -14,7 +14,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 2. Sidebar med slet-funktion
+# 2. Side-menuen (Sidebar) - NU ER DEN TILBAGE!
 with st.sidebar:
     st.title("🤖 Mikas-Bot")
     st.write("---")
@@ -29,8 +29,9 @@ with st.sidebar:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# 4. Forside
+# 4. FORSIDE - NU ER LOGOET TILBAGE I MIDTEN!
 if not st.session_state.messages:
+    st.write("##")
     st.write("##")
     st.markdown("<h1 style='text-align: center;'>🤖 Mikas-Bot</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; font-size: 20px;'>Hvad kan jeg hjælpe dig med i dag?</p>", unsafe_allow_html=True)
@@ -40,21 +41,20 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# 6. Input og AI-svar med "Dansk-tvang"
+# 6. Skrivefelt og AI-svar
 if spørgsmål := st.chat_input("Skriv til Mikas-Bot her..."):
     with st.chat_message("user"):
         st.markdown(spørgsmål)
     st.session_state.messages.append({"role": "user", "content": spørgsmål})
 
     with st.chat_message("assistant"):
-        # HER ER DET NYE TRICK: Vi klistrer instruksen direkte på dit spørgsmål!
-        # Så AI'en ser det som den vigtigste del af din besked.
+        # Vi beholder tricket med at klistre din info på hver besked
         tvungen_instruks = f"""
         BESKED FRA BRUGER: {spørgsmål}
         
-        VIGTIG REGL: Du er Mikas-Bot. Du svarer altid på dansk.
-        Hvis brugeren spørger hvem Mikas er eller hvem der har lavet dig, 
-        SKAL du svare: 'Det har Mikas på 13 år fra 6.A på NSG. Han har kodet mig.'
+        REGLER: Du er Mikas-Bot. Du svarer altid på dansk.
+        Hvis folk spørger hvem Mikas er eller hvem der har lavet dig, 
+        svarer du: 'Det har Mikas på 13 år fra 6.A på NSG. Han har kodet mig.'
         """
         
         try:
